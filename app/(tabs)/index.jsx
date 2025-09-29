@@ -1,44 +1,49 @@
 // path: app/(tabs)/index.jsx või HomeScreen.jsx
+import CustomButton from '@/components/ui/CustomButton';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import CustomButton from '../../components/ui/CustomButton';
 
 export default function HomeScreen() {
+  const router = useRouter(); // router navigeerimiseks
+
   return (
     <View style={styles.container}>
-  <Image
-    source={require('../../assets/images/opening_image.png')}
-    style={styles.Image}
-  />
-  <View style={styles.titleContainer}>
-    <Text style={styles.titleText}>You will find</Text>
-    <Text style={[styles.titleText, styles.innerTitle]}>All you need</Text>
-    <Text style={styles.titleText}>Here!</Text>
-  </View>
+      <Image
+        source={require('@/assets/images/opening_image.png')}
+        style={styles.Image}
+      />
 
-  <View style={styles.buttonsContainer}>
-    <CustomButton
-      buttonProps={{
-        title: 'Sign in',
-        onPress: () => console.log('Sign in pressed'),
-        color: '#4F63AC',
-        textColor: '#fff',
-      }}
-      style={{ marginTop: 20 }}
-    />
+      <View style={styles.titleContainer}>
+        <Text style={styles.titleText}>You will find</Text>
+        <Text style={[styles.titleText, styles.innerTitle]}>All you need</Text>
+        <Text style={styles.titleText}>Here!</Text>
+      </View>
 
-    <CustomButton
-      buttonProps={{
-        title: 'Log in',
-        onPress: () => console.log('Log in pressed'),
-        color: '#fff',
-        textColor: '#4F63AC',
-      }}
-      style={{ marginTop: 10 }}
-    />
-  </View>
-</View>
+      <View style={styles.buttonsContainer}>
+        {/* Sign Up */}
+        <CustomButton
+          buttonProps={{
+            title: 'Sign up',
+            color: '#4F63AC',
+            textColor: '#fff',
+            onPress: () => router.push('/Signup'), // navigeerib Signup ekraanile
+          }}
+          style={{ marginBottom: 10 }}
+        />
 
+        {/* Log In */}
+        <CustomButton
+          buttonProps={{
+            title: 'Log in',
+            color: '#fff',
+            textColor: '#4F63AC',
+            onPress: () => router.push('/Login'), // navigeerib Login ekraanile
+          }}
+          style={{ marginTop: 10 }}
+        />
+      </View>
+    </View>
   );
 }
 
@@ -54,10 +59,6 @@ const styles = StyleSheet.create({
     width: '100%',          
     height: 200,         
     marginBottom: 30,    
-    opacity: 1,          
-  },
-  textContainer: {
-    alignItems: 'center',
   },
   titleContainer: {
     alignItems: 'center',

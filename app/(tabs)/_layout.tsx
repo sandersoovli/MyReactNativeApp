@@ -1,29 +1,26 @@
-import { Tabs } from 'expo-router';
+// app/(tabs)/_layout.tsx
+import { Stack } from 'expo-router';
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function AuthLayout() {
   return (
-    <Tabs
+    <Stack
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
+        headerShown: true,
+        headerTitle: undefined,  // ei näita kausta nime
+      }}
+    >
+      <Stack.Screen
         name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
+        options={{ title: '' }}
       />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
+      <Stack.Screen
+        name="Login"
+        options={{ title: 'Login' }}
       />
-    </Tabs>
+      <Stack.Screen
+        name="Signup"
+        options={{ title: 'Sign Up' }}
+      />
+    </Stack>
   );
 }
