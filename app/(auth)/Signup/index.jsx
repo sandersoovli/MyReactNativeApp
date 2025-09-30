@@ -1,8 +1,8 @@
+// Signup.jsx
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
 
 export default function Signup() {
   const router = useRouter();
@@ -23,8 +23,7 @@ export default function Signup() {
   };
 
   const handleGmailLogin = () => {
-    console.log('Gmail login clicked');
-    // Siin hiljem lisad Gmail Sign-In loogika
+    alert("Google login pole veel seadistatud Expo jaoks!");
   };
 
   return (
@@ -73,12 +72,11 @@ export default function Signup() {
       </TouchableOpacity>
 
       <View style={{ alignItems: 'center', marginTop: 20 }}>
-  <Text style={styles.orSignUpWithText}>Or sign up with</Text>
-  <TouchableOpacity style={styles.GmailSignInButton} onPress={handleGmailLogin}>
-    <AntDesign name="google" size={24} color="white" style={styles.googleIcon} />
-  </TouchableOpacity>
-</View>
-
+        <Text style={styles.orSignUpWithText}>Or sign up with</Text>
+        <TouchableOpacity style={styles.GmailSignInButton} onPress={handleGmailLogin}>
+          <AntDesign name="google" size={24} color="white" style={styles.googleIcon} />
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity onPress={() => router.push('/(auth)/Login')}>
         <Text style={styles.footerText}>Already have an account? Login</Text>
@@ -150,26 +148,24 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   orSignUpWithText: {
-  fontSize: 14,
-  color: '#333',
-  fontWeight: 'bold',
-  textAlign: 'center',
-  marginBottom: 10, // väike ruum teksti ja nupu vahel
-},
-GmailSignInButton: {
-  width: 200, // või '50%'
-  height: 60,
-  borderRadius: 8,
-  backgroundColor: '#233a5fff',
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-googleIcon: {
-  // moved styles from inline to StyleSheet for consistency
-  color: 'white',
-  fontWeight: '600',
-},
-
+    fontSize: 14,
+    color: '#333',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  GmailSignInButton: {
+    width: 200,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: '#233a5fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  googleIcon: {
+    color: 'white',
+    fontWeight: '600',
+  },
   footerText: {
     textAlign: 'center',
     marginTop: 15,
