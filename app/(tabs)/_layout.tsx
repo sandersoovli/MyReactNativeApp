@@ -1,26 +1,11 @@
-// app/(tabs)/_layout.tsx
-import { Stack } from 'expo-router';
+import { Tabs } from 'expo-router';
 
-export default function AuthLayout() {
+export default function TabsLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: true,
-        headerTitle: undefined,  // ei näita kausta nime
-      }}
-    >
-      <Stack.Screen
-        name="index"
-        options={{ title: '' }}
-      />
-      <Stack.Screen
-        name="Login"
-        options={{ title: 'Login' }}
-      />
-      <Stack.Screen
-        name="Signup"
-        options={{ title: 'Sign Up' }}
-      />
-    </Stack>
+    <Tabs>
+      <Tabs.Screen name="index" options={{ title: 'Home' }} />
+      <Tabs.Screen name="favorites" options={{ title: 'Favorites' }} />
+      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
+    </Tabs>
   );
 }

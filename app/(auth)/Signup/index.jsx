@@ -1,4 +1,4 @@
-// Signup.jsx
+// (auth)/Signup/index.jsx
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -27,7 +27,7 @@ export default function Signup() {
     console.log('Agreed:', agreed);
 
     // Pärast edukat registreerimist liigu Tabs ekraanile
-    router.push('/(tabs)/index'); 
+    router.push('/(tabs)'); 
   };
 
   const handleGmailLogin = () => {

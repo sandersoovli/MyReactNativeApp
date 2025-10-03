@@ -3,7 +3,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  apiKey: "AIzaSyAbeeNd2SceubuiugFvPfX8lARIDpTIIug",
   authDomain: "furnitureapp-90ee7.firebaseapp.com",
   projectId: "furnitureapp-90ee7",
   storageBucket: "furnitureapp-90ee7.appspot.com",
