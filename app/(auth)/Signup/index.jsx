@@ -37,6 +37,10 @@ export default function Signup() {
   const openTerms = () => Linking.openURL('https://yourwebsite.com/terms');
   const openPrivacy = () => Linking.openURL('https://yourwebsite.com/privacy');
 
+  const goToSplash = () => {
+    router.replace('/splash'); // navigeeri Splash ekraanile
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Name</Text>
@@ -188,4 +192,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'blue',
   },
+  backButton: { marginTop: 15, alignItems: 'center' },
+  backButtonText: { color: 'blue', fontSize: 16 },
 });
