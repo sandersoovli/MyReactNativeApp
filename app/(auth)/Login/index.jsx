@@ -13,11 +13,15 @@ export default function Login() {
   const handleLogin = () => {
     console.log('Email:', email);
     console.log('Password:', password);
-    router.push('/(tabs)/index'); // Hiljem siia Firebase auth
+    router.push('/(tabs)/'); // Hiljem siia Firebase auth
   };
 
   const handleGmailLogin = () => {
     alert("Google login pole veel seadistatud Expo jaoks!");
+  };
+
+  const goToSplash = () => {
+    router.push('/splash'); // navigeeri Splash ekraanile
   };
 
   return (
@@ -104,7 +108,7 @@ const styles = StyleSheet.create({
   width: '100%',
   height: 60,
   borderRadius: 8,
-  backgroundColor: '#5ec05cff',
+  backgroundColor: '#4F63AC',
   justifyContent: 'center',
   alignItems: 'center',
   marginTop: 20,

@@ -1,20 +1,26 @@
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
 
 export default function RootLayout() {
   return (
-    <>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </>
+    <Stack initialRouteName="splash/index">
+      {/* Splash */}
+      <Stack.Screen name="splash/index" options={{ headerShown: false }} />
+
+      {/* Auth kaust (Login/Signup) */}
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+
+      {/* Tabs kaust */}
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+      {/* Terms & Privacy modalina */}
+      <Stack.Screen 
+        name="terms-privacy" 
+        options={{ 
+          presentation: 'modal', // modal efekt
+          headerShown: true, 
+          title: 'Terms & Privacy' // see ilmub päises
+        }} 
+      />
+    </Stack>
   );
 }

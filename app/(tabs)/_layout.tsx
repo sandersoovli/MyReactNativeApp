@@ -1,26 +1,27 @@
-// app/(tabs)/_layout.tsx
-import { Stack } from 'expo-router';
+// app/(tabs)/_layout.jsx
+import { AntDesign } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
+import React from 'react';
 
-export default function AuthLayout() {
+export default function TabLayout() {
   return (
-    <Stack
+    <Tabs
       screenOptions={{
         headerShown: true,
-        headerTitle: undefined,  // ei näita kausta nime
+        tabBarActiveTintColor: 'tomato',
+        tabBarInactiveTintColor: 'gray',
       }}
     >
-      <Stack.Screen
-        name="index"
-        options={{ title: '' }}
+      <Tabs.Screen
+        name="index" // Home ekraan
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <AntDesign name="home" size={size} color={color} />
+          ),
+        }}
       />
-      <Stack.Screen
-        name="Login"
-        options={{ title: 'Login' }}
-      />
-      <Stack.Screen
-        name="Signup"
-        options={{ title: 'Sign Up' }}
-      />
-    </Stack>
+      
+    </Tabs>
   );
 }

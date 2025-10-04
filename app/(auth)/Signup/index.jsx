@@ -12,18 +12,27 @@ export default function Signup() {
   const [agreed, setAgreed] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Kontrollime, kas kõik väljad on täidetud ja linnuke pandud
+  const isFormValid = name !== '' && email !== '' && password !== '' && agreed;
+
   const handleSignup = () => {
+    if (!isFormValid) return; // Kui vorm ei ole täidetud, ei tee midagi
+
     console.log('Name:', name);
     console.log('Email:', email);
     console.log('Password:', password);
     console.log('Agreed:', agreed);
 
-    // Pärast edukat registreerimist liigu Tabs ekraanile
-    router.push('/(tabs)/index'); 
+    // Navigeeri Tabs ekraanile pärast edukat registreerimist
+    router.push('/(tabs)'); 
   };
 
   const handleGmailLogin = () => {
     alert("Google login pole veel seadistatud Expo jaoks!");
+  };
+
+  const openTerms = () => {
+    router.push('/terms-privacy'); // Avab Terms & Privacy ekraani
   };
 
   return (
@@ -63,11 +72,18 @@ export default function Signup() {
         onPress={() => setAgreed(!agreed)}
       >
         <Text style={styles.checkboxText}>
-          {agreed ? '☑' : '☐'} I agree with Terms & Privacy
+          {agreed ? '☑' : '☐'} I agree with{' '}
+          <Text style={{ color: 'blue' }} onPress={openTerms}>
+            Terms & Privacy
+          </Text>
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
+      <TouchableOpacity
+        style={[styles.signupButton, { backgroundColor: isFormValid ? '#4F63AC' : '#ccc' }]}
+        onPress={handleSignup}
+        disabled={!isFormValid}
+      >
         <Text style={styles.signupButtonText}>Sign Up</Text>
       </TouchableOpacity>
 
@@ -137,7 +153,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 60,
     borderRadius: 8,
-    backgroundColor: '#70c05cff',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
