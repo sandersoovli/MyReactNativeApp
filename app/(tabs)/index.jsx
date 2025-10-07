@@ -1,17 +1,17 @@
-// app/(tabs)/index.jsx
 import CustomHeader from '@/components/ui/CustomHeader';
 import { Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
-  const handleSearch = () => {
-    alert("Otsing avaneb...");
-  };
+  const router = useRouter();
+
+  const handleSearch = () => alert('Otsing avaneb...');
 
   const categories = [
     { name: 'Popular', icon: 'star-outline', iconType: 'Ionicons' },
@@ -19,7 +19,7 @@ export default function HomeScreen() {
     { name: 'Table', icon: 'desk', iconType: 'MaterialIcons' },
     { name: 'Armchair', icon: 'sofa-single', iconType: 'MaterialCommunityIcons' },
     { name: 'Bed', icon: 'bed', iconType: 'FontAwesome' },
-    { name: 'Lamp', icon: 'lamp', iconType: 'MaterialCommunityIcons'}
+    { name: 'Lamp', icon: 'lamp', iconType: 'MaterialCommunityIcons' },
   ];
 
   const products = [
@@ -31,7 +31,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* 1. CUSTOM HEADER */}
+      {/* Custom Header */}
       <CustomHeader 
         title="Find All You Need" 
         leftIconName="search-outline"
@@ -39,7 +39,7 @@ export default function HomeScreen() {
         titleStyle={styles.headerTitle}
       />
 
-      {/* 2. KATEGOORIATE RIDA */}
+      {/* Kategooriate rida */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryContainer}>
         {categories.map((cat, index) => (
           <TouchableOpacity key={index} style={styles.categoryItem}>
@@ -53,16 +53,19 @@ export default function HomeScreen() {
         ))}
       </ScrollView>
 
-      {/* 3. TOODETE NIMEKIRI */}
+      {/* Toodete nimekiri */}
       <FlatList
         data={products}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.productCard}>
+          <TouchableOpacity
+            style={styles.productCard}
+            onPress={() => router.push(`/productdetails?id=${item.id}`)} // Saadame id ProductDetail ekraanile
+          >
             <Image source={item.image} style={styles.productImage} />
             <Text style={styles.productName}>{item.name}</Text>
             <Text style={styles.productPrice}>{item.price}</Text>
-          </View>
+          </TouchableOpacity>
         )}
         numColumns={2}
         contentContainerStyle={styles.productsContainer}
@@ -72,67 +75,15 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingTop: 10,
-  },
-  headerTitle: {
-    fontSize: 20, 
-    fontWeight: '600',
-    textAlign: 'left',
-    marginLeft: 0, 
-    flex: 1,
-  },
-  categoryContainer: {
-    flexDirection: 'row',
-    paddingVertical: 10,
-    marginBottom: 10,
-  },
-  categoryItem: {
-    alignItems: 'center',
-    marginRight: 20,
-  },
-  categoryIcon: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 5,
-  },
-  categoryText: {
-    fontSize: 12,
-    color: '#333',
-    fontWeight: '500',
-  },
-  productsContainer: {
-    paddingBottom: 20,
-  },
-  productCard: {
-    flex: 1,
-    margin: 10,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 10,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  productImage: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
-  },
-  productName: {
-    marginTop: 8,
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  productPrice: {
-    marginTop: 4,
-    color: '#5C6BC0',
-    fontWeight: 'bold',
-  },
+  container: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 20, paddingTop: 10 },
+  headerTitle: { fontSize: 20, fontWeight: '600', textAlign: 'left', marginLeft: 0, flex: 1 },
+  categoryContainer: { flexDirection: 'row', paddingVertical: 10, marginBottom: 10 },
+  categoryItem: { alignItems: 'center', marginRight: 20 },
+  categoryIcon: { backgroundColor: '#f0f0f0', borderRadius: 10, padding: 10, marginBottom: 5 },
+  categoryText: { fontSize: 12, color: '#333', fontWeight: '500' },
+  productsContainer: { paddingBottom: 20 },
+  productCard: { flex: 1, margin: 10, backgroundColor: '#fff', borderRadius: 12, padding: 10, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 6, elevation: 3 },
+  productImage: { width: 100, height: 100, resizeMode: 'contain' },
+  productName: { marginTop: 8, fontWeight: '600', fontSize: 14 },
+  productPrice: { marginTop: 4, color: '#5C6BC0', fontWeight: 'bold' },
 });

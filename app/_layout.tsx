@@ -21,6 +21,15 @@ export default function RootLayout() {
           title: 'Terms & Privacy' // see ilmub päises
         }} 
       />
+
+      {/* Toote detailid - kasutab Custom Headerit, seega peida vaikimisi päis */}
+      <Stack.Screen 
+        name="productdetails" 
+        options={{ 
+          headerShown: false,
+          headerBackVisible: false,
+        }} 
+      />
     </Stack>
   );
 }
