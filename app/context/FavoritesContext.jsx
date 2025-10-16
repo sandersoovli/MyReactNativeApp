@@ -1,37 +1,41 @@
+// app/context/FavoritesContext.jsx
 import { createContext, useContext, useState } from 'react';
 
 const FavoritesContext = createContext();
 
 export const FavoritesProvider = ({ children }) => {
+  // Hoiame massiivis ainult toodete ID-sid (stringid)
   const [favorites, setFavorites] = useState([]);
 
-  const addFavorite = (product) => {
+  /**
+   * Kontrollib, kas antud ID on lemmikute massiivis.
+   */
+  const isFavorite = (productId) => favorites.includes(productId);
+
+  /**
+   * Lisab või eemaldab toote ID lemmikute massiivist.
+   */
+  const toggleFavorite = (productId) => { 
     setFavorites((prev) => {
-      if (!prev.find((p) => p.id === product.id)) {
-        return [...prev, product];
+      const exists = prev.includes(productId);
+      
+      if (exists) {
+        // Eemalda favoriit
+        return prev.filter((id) => id !== productId);
+      } else {
+        // Lisa favoriit
+        return [...prev, productId]; 
       }
-      return prev; // Kui juba olemas, ei lisa uuesti
     });
   };
 
-  const removeFavorite = (productId) => {
-    setFavorites((prev) => prev.filter((p) => p.id !== productId));
-  };
-
-  const toggleFavorite = (product) => {
-    const exists = favorites.find((p) => p.id === product.id);
-    if (exists) {
-      removeFavorite(product.id);
-    } else {
-      addFavorite(product);
-    }
-  };
-
   return (
-    <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite, toggleFavorite }}>
+    // Jaga kõik vajalikud väärtused rakendusega
+    <FavoritesContext.Provider value={{ favorites, toggleFavorite, isFavorite }}>
       {children}
     </FavoritesContext.Provider>
   );
 };
 
+// Custom hook Context'i tarbimiseks
 export const useFavorites = () => useContext(FavoritesContext);

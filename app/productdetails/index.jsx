@@ -1,9 +1,10 @@
-// app/(tabs)/productdetails/index.jsx
+// ProductDetail.jsx
+import { useFavorites } from '@/app/context/FavoritesContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
 import { Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+// AJUTINE: Tooted tuleks tegelikult laadida väljaspoolt
 const products = [
   { id: '1', name: 'Modern Chair', price: '€50', image: require('@/assets/images/chair.png'), description: 'Comfortable modern chair for your living room.' },
   { id: '2', name: 'Wooden Desk', price: '€25', image: require('@/assets/images/desk.png'), description: 'A sturdy wooden desk perfect for work.' },
@@ -11,18 +12,17 @@ const products = [
   { id: '4', name: 'Minimal Stand', price: '€40', image: require('@/assets/images/table.png'), description: 'Minimal stand for your room.' },
 ];
 
-
-export const options = {
-  headerShown: false, // Ka index.jsx ei näita vaikimisi päist
-};
+export const options = { headerShown: false };
 
 export default function ProductDetail() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { id } = params;
+  const { id } = params; 
+
+  const { toggleFavorite, isFavorite } = useFavorites(); 
 
   const product = products.find(p => p.id === id);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const isFav = isFavorite(id); 
 
   if (!product) {
     return (
@@ -35,29 +35,29 @@ export default function ProductDetail() {
     );
   }
 
-  const toggleFavorite = () => setIsFavorite(!isFavorite);
   const contactSeller = () => Linking.openURL('mailto:seller@example.com');
 
   return (
     <ScrollView style={styles.container}>
-      
-    
-
-      {/* Pilt */}
       <Image source={product.image} style={styles.image} />
 
-      {/* Info */}
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{product.name}</Text>
         <Text style={styles.price}>{product.price}</Text>
         <Text style={styles.description}>{product.description}</Text>
 
-        {/* Lemmik nupp */}
-        <TouchableOpacity style={styles.favoriteButton} onPress={toggleFavorite}>
-          <Ionicons name={isFavorite ? 'heart' : 'heart-outline'} size={28} color={isFavorite ? 'red' : '#333'} />
+        {/* LEMMIKUTE NUPP */}
+        <TouchableOpacity 
+          style={styles.favoriteButton} 
+          onPress={() => toggleFavorite(id)} // Saadetakse ainult ID
+        >
+          <Ionicons 
+            name={isFav ? 'heart' : 'heart-outline'} 
+            size={28} 
+            color={isFav ? 'red' : '#333'} 
+          />
         </TouchableOpacity>
 
-        {/* Kontakt nupp */}
         <TouchableOpacity style={styles.contactButton} onPress={contactSeller}>
           <Text style={styles.contactText}>Contact Seller</Text>
         </TouchableOpacity>
@@ -68,7 +68,6 @@ export default function ProductDetail() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  backButton: { padding: 10 },
   image: { width: '100%', height: 300, resizeMode: 'contain', marginBottom: 20 },
   infoContainer: { paddingHorizontal: 20 },
   name: { fontSize: 22, fontWeight: '700', marginBottom: 8 },
