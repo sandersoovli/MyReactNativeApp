@@ -1,5 +1,5 @@
 // ProductDetail.jsx
-import { useFavorites } from '@/app/context/FavoritesContext';
+import { useFavorites } from '@/app/(context)/FavoritesContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -39,7 +39,7 @@ export default function ProductDetail() {
 
   return (
     <ScrollView style={styles.container}>
-      <Image source={product.image} style={styles.image} />
+      <Image source={product.image} style={styles.image} resizeMode='contain' />
 
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{product.name}</Text>
@@ -68,7 +68,7 @@ export default function ProductDetail() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  image: { width: '100%', height: 300, resizeMode: 'contain', marginBottom: 20 },
+  image: { width: '100%', height: 300, marginBottom: 20 },
   infoContainer: { paddingHorizontal: 20 },
   name: { fontSize: 22, fontWeight: '700', marginBottom: 8 },
   price: { fontSize: 18, fontWeight: '600', color: '#5C6BC0', marginBottom: 12 },

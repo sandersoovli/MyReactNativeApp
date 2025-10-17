@@ -1,5 +1,5 @@
 // Favorites.js
-import { useFavorites } from '@/app/context/FavoritesContext';
+import { useFavorites } from '@/app/(context)/FavoritesContext';
 import { useRouter } from 'expo-router';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -16,7 +16,7 @@ const FavoriteItem = ({ product, router }) => (
     style={itemStyles.itemContainer} 
     onPress={() => router.push({ pathname: 'productdetails', params: { id: product.id } })}
   >
-    <Image source={product.image} style={itemStyles.image} />
+    <Image source={product.image} style={itemStyles.image} resizeMode='contain' />
     <View style={itemStyles.textContainer}>
       <Text style={itemStyles.name}>{product.name}</Text>
       <Text style={itemStyles.price}>{product.price}</Text>
@@ -75,7 +75,6 @@ const itemStyles = StyleSheet.create({
   image: {
     width: 60,
     height: 60,
-    resizeMode: 'contain',
     marginRight: 15,
   },
   textContainer: {
