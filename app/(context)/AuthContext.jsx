@@ -1,116 +1,95 @@
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getApps, initializeApp } from 'firebase/app';
 import {
-    getApps,
-    initializeApp
-} from 'firebase/app';
-import {
+    getAuth,
     getReactNativePersistence,
     initializeAuth,
-    // Eemaldasime getAuth, sest kasutame initializeAuth
     onAuthStateChanged,
     signInAnonymously,
-    signInWithCustomToken
+    signOut
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-// --- TEIE TEGELIK FIREBASE CONFIG (ASENDATUD) ---
+// --- Firebase config ---
 const firebaseConfig = {
-    apiKey: "AIzaSyAbeeNd2SceubuiugFvPfX8lARIDpTIIug", 
-    authDomain: "furnitureapp-90ee7.firebaseapp.com",
-    projectId: "furnitureapp-90ee7",
-    storageBucket: "furnitureapp-90ee7.appspot.com",
-    messagingSenderId: "571553104195",
-    appId: "1:571553104195:android:75d3fd43a3c8cba238eff6"
+  apiKey: "AIzaSyAbeeNd2SceubuiugFvPfX8lARIDpTIIug",
+  authDomain: "furnitureapp-90ee7.firebaseapp.com",
+  projectId: "furnitureapp-90ee7",
+  storageBucket: "furnitureapp-90ee7.appspot.com",
+  messagingSenderId: "571553104195",
+  appId: "1:571553104195:android:75d3fd43a3c8cba238eff6"
 };
 
-// --- Firebase Initsialiseerimine (Keskne Koht) ---
-const app = getApps().length === 0 
-    ? initializeApp(firebaseConfig) 
-    : getApps()[0];
+// Firebase init
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-// KRITILINE: Kasutame initializeAuth, et lubada React Native'is püsivus
-export const auth = initializeAuth(app, {
-    persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-}); 
+// Auth init
+let auth;
+try {
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(AsyncStorage),
+  });
+} catch (e) {
+  auth = getAuth(app);
+}
 
 export const db = getFirestore(app);
 
-// Loome Auth Contexti
-// ESIMENE PARANDUS: createContext algväärtuseks määrame null, mitte {} (või jätame tühjaks)
+// --- Auth Context ---
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    // Oleku muutujad
-    const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true); // ALUSTA väärtusega true
-    const isAuthenticated = !!user;
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const authenticateWithCanvasToken = async () => {
-            try {
-                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+  const logout = async () => {
+    try {
+      setIsLoading(true);
+      await signOut(auth);
+      setUser(null);
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-                // Me ootame onAuthStateChanged tulemusi. 
-                // Anonüümne sisselogimine on tagavara, kui kedagi pole ja tokenit pole.
-                if (!user && !token && !isLoading) {
-                   await signInAnonymously(auth);
-                } else if (token && isLoading) {
-                    // Kasutame tokenit ainult laadimise ajal, et vältida korduvat sisselogimist
-                    await signInWithCustomToken(auth, token);
-                }
-
-            } catch (e) {
-                console.error("Firebase Auth initialization or fallback failed:", e);
-            }
-        };
-
-
-        // Seadista autentimise oleku kuulaja
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-            // Seadistame isLoading false'iks alles siin
-            setIsLoading(false); 
-        });
-        
-        // Kutsume autentimise loogika välja pärast onAuthStateChanged-i seadistamist
-        // Kasutan setTimeouti, et anda onAuthStateChangedile hetk aega püsivuse kontrollimiseks
-        setTimeout(() => {
-            authenticateWithCanvasToken();
-        }, 50);
-
-        // Puhasta kuulaja komponendi eemaldamisel
-        return () => unsubscribe();
-    }, []); 
-
-    // Pakkujast väljastatavad väärtused
-    const value = {
-        user,
-        isLoading,
-        isAuthenticated,
-        auth, 
-        db, 
-    };
-
-    return (
-        <AuthContext.Provider value={value}>
-            {children}
-        </AuthContext.Provider>
-    );
-};
-
-// Custom hook Context'i mugavaks tarbimiseks
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-
-    // TEINE PARANDUS: Lisa kontroll, et vältida 'undefined' viga
-    if (context === undefined || context === null) {
-        // Kuigi null on algväärtus, peaks see muutuma AuthProvideri sees. 
-        // Kui see on endiselt null, on komponendi paigutusega viga.
-        throw new Error('useAuth peab olema kasutatud AuthProvideri sees');
+  useEffect(() => {
+    if (!auth) {
+      console.error("Firebase Auth object is null.");
+      setIsLoading(false);
+      return;
     }
 
-    return context;
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      setIsLoading(false);
+
+      // Auto anon login ainult siis, kui pole ühtegi kasutajat
+      if (!currentUser) {
+        try {
+          await signInAnonymously(auth);
+        } catch (e) {
+          console.error("Anonüümne login ebaõnnestus:", e);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // NB: profiil näitab ka anonüümseid kasutajaid
+  const isAuthenticated = !!user;
+
+  const value = { user, isLoading, auth, db, logout, isAuthenticated };
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth peab olema AuthProvideri sees");
+  return context;
 };
 
 export default AuthProvider;

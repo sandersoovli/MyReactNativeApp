@@ -7,7 +7,7 @@ export default function RootLayout() {
     <AuthProvider>
       <FavoritesProvider>
         <Stack initialRouteName="splash/index">
-          {/* Splash */}
+          {/* Splash ekraan */}
           <Stack.Screen name="splash/index" options={{ headerShown: false }} />
 
           {/* Auth kaust */}

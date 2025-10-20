@@ -1,9 +1,7 @@
-// app/(tabs)/_layout.jsx
 import { AntDesign } from '@expo/vector-icons';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
-import React from 'react';
 
 export default function TabLayout() {
   return (
@@ -14,8 +12,9 @@ export default function TabLayout() {
         tabBarInactiveTintColor: 'gray',
       }}
     >
+      {/* Home ekraan */}
       <Tabs.Screen
-        name="index" // Home ekraan
+        name="index"
         options={{
           title: 'Home',
           tabBarIcon: ({ color, size }) => (
@@ -23,9 +22,10 @@ export default function TabLayout() {
           ),
         }}
       />
-      
+
+      {/* Favorites ekraan */}
       <Tabs.Screen
-        name="favorites" // favorites ekraan
+        name="favorites"
         options={{
           title: 'Favorites',
           tabBarIcon: ({ color, size }) => (
@@ -34,8 +34,9 @@ export default function TabLayout() {
         }}
       />
 
+      {/* Profile ekraan */}
       <Tabs.Screen
-        name="profile" // profile ekraan
+        name="profile"
         options={{
           title: 'Profile',
           tabBarIcon: ({ color, size }) => (
