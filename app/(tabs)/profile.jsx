@@ -1,5 +1,6 @@
 // path: app/(tabs)/profile.jsx
 import { useAuth } from '@/app/(context)/AuthContext';
+import { useListings } from '@/app/(context)/ListingsContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import {
@@ -14,6 +15,7 @@ import {
 
 export default function ProfileScreen() {
   const { user, isLoading, logout, isAuthenticated } = useAuth();
+  const { listings } = useListings(); // <- siin loeme listingute arvu
   const router = useRouter();
 
   // Kasutajanime format
@@ -31,7 +33,6 @@ export default function ProfileScreen() {
   // Väljalogimise funktsioon
   const handleSignOut = async () => {
     try {
-      console.log('logout is clicked');
       await logout();
       router.replace('/splash');
     } catch (error) {
@@ -96,8 +97,8 @@ export default function ProfileScreen() {
       <View style={styles.optionsGroup}>
         <ProfileOption
           title="My Listings"
-          subtitle={`Already have ${user.listingsCount || 0} listing(s)`}
-          onPress={() => router.push('/my-listings')}
+          subtitle={`Already have ${listings.length} listing(s)`} // <- kasutab konteksti
+          onPress={() => router.push('/My-Listings/my-listings')}
         />
         <ProfileOption
           title="Settings"
@@ -108,7 +109,7 @@ export default function ProfileScreen() {
 
       <TouchableOpacity 
         style={styles.addButton} 
-        onPress={() => router.push('/add-listing')}
+        onPress={() => router.push('/My-Listings/add-listing')}
       >
         <Text style={styles.addButtonText}>Add a new listing</Text>
       </TouchableOpacity>
@@ -117,60 +118,20 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#F7F7F7',
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#F7F7F7' },
   loadingContainer: { flex:1, justifyContent:'center', alignItems:'center' },
   loadingText: { fontSize: 18, color:'#555', marginTop:10 },
   message: { fontSize:18, color:'#333', marginBottom:20, textAlign:'center' },
   loginButton: { paddingHorizontal:20, paddingVertical:10, backgroundColor:'#5C6BC0', borderRadius:8 },
   loginButtonText: { color:'#fff', fontWeight:'700', fontSize:16 },
-
-  // --- Profiili päis
-  headerContainer: {
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center',
-    marginBottom: 30,
-  },
+  headerContainer: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:30 },
   userName: { fontSize:22, fontWeight:'600', color:'#333' },
   userEmail: { fontSize:14, color:'#666', marginTop:2 },
   logoutButton: { padding:5 },
-
-  // --- Valikud
-  optionsGroup: {
-    marginBottom: 20,
-  },
-  optionContainer: {
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center',
-    padding:15,
-    backgroundColor:'#fff',
-    borderRadius:12,
-    marginBottom:10,
-    shadowColor:"#000",
-    shadowOffset:{ width:0, height:1 },
-    shadowOpacity:0.1,
-    shadowRadius:2.22,
-    elevation:3,
-  },
+  optionsGroup: { marginBottom:20 },
+  optionContainer: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', padding:15, backgroundColor:'#fff', borderRadius:12, marginBottom:10, shadowColor:"#000", shadowOffset:{ width:0, height:1 }, shadowOpacity:0.1, shadowRadius:2.22, elevation:3 },
   optionTitle: { fontSize:16, fontWeight:'600', color:'#333' },
   optionSubtitle: { fontSize:12, color:'#999', marginTop:2 },
-
-  // --- Add Button
-  addButton: {
-    backgroundColor: '#4857A6',
-    paddingVertical:15,
-    borderRadius:12,
-    marginTop:10,
-    shadowColor: "#4857A6",
-    shadowOffset: { width:0, height:4 },
-    shadowOpacity:0.3,
-    shadowRadius:5.46,
-    elevation:9,
-  },
+  addButton: { backgroundColor: '#4857A6', paddingVertical:15, borderRadius:12, marginTop:10, shadowColor: "#4857A6", shadowOffset: { width:0, height:4 }, shadowOpacity:0.3, shadowRadius:5.46, elevation:9 },
   addButtonText: { color:'#fff', fontSize:16, fontWeight:'bold', textAlign:'center' },
 });
