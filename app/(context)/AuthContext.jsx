@@ -5,7 +5,6 @@ import {
     getReactNativePersistence,
     initializeAuth,
     onAuthStateChanged,
-    signInAnonymously,
     signOut
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
@@ -33,7 +32,7 @@ try {
 } catch (e) {
   auth = getAuth(app);
 }
-
+export { auth };
 export const db = getFirestore(app);
 
 // --- Auth Context ---
@@ -67,22 +66,22 @@ export const AuthProvider = ({ children }) => {
       setIsLoading(false);
 
       // Auto anon login ainult siis, kui pole ühtegi kasutajat
-      if (!currentUser) {
+      /*if (!currentUser) {
         try {
           await signInAnonymously(auth);
         } catch (e) {
           console.error("Anonüümne login ebaõnnestus:", e);
         }
-      }
+      }*/
     });
 
     return () => unsubscribe();
   }, []);
 
   // NB: profiil näitab ka anonüümseid kasutajaid
-  const isAuthenticated = !!user;
+  //const isAuthenticated = !!user;
 
-  const value = { user, isLoading, auth, db, logout, isAuthenticated };
+  const value = { user, isLoading, auth, db, logout, isAuthenticated: !!user };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 

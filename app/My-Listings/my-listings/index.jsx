@@ -33,12 +33,15 @@ const MyListingsScreen = () => {
             {listing.photos?.[0]?.uri && <Image source={{ uri: listing.photos[0].uri }} style={styles.photo} />}
             <View style={styles.info}>
               <Text style={styles.title}>{listing.title}</Text>
-              <Text style={styles.price}>{listing.price}</Text>
+              <Text style={styles.price}>{listing.price} €</Text>
             </View>
             <View style={styles.actions}>
-              <TouchableOpacity onPress={() => router.push(`/edit-listing/${listing.id}`)} style={styles.actionBtn}>
-                <Ionicons name="create-outline" size={20} color="#4857A6" />
-              </TouchableOpacity>
+              <TouchableOpacity 
+  onPress={() => router.push(`/My-Listings/edit-listing/${listing.id}`)} 
+  style={styles.actionBtn}
+>
+  <Ionicons name="create-outline" size={20} color="#4857A6" />
+</TouchableOpacity>
               <TouchableOpacity onPress={() => handleDelete(listing.id)} style={styles.actionBtn}>
                 <Ionicons name="trash-outline" size={20} color="#D9534F" />
               </TouchableOpacity>

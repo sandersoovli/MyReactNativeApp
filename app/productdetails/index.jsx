@@ -1,60 +1,92 @@
-// ProductDetail.jsx
 import { useFavorites } from '@/app/(context)/FavoritesContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-// AJUTINE: Tooted tuleks tegelikult laadida väljaspoolt
-const products = [
-  { id: '1', name: 'Modern Chair', price: '€50', image: require('@/assets/images/chair.png'), description: 'Comfortable modern chair for your living room.' },
-  { id: '2', name: 'Wooden Desk', price: '€25', image: require('@/assets/images/desk.png'), description: 'A sturdy wooden desk perfect for work.' },
-  { id: '3', name: 'Modern Lamp', price: '€35', image: require('@/assets/images/lamp.png'), description: 'Stylish lamp with adjustable brightness.' },
-  { id: '4', name: 'Minimal Stand', price: '€40', image: require('@/assets/images/table.png'), description: 'Minimal stand for your room.' },
-];
+import { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Image,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export const options = { headerShown: false };
 
 export default function ProductDetail() {
   const router = useRouter();
-  const params = useLocalSearchParams();
-  const { id } = params; 
+  const { id } = useLocalSearchParams();
 
-  const { toggleFavorite, isFavorite } = useFavorites(); 
+  const { toggleFavorite, isFavorite } = useFavorites();
 
-  const product = products.find(p => p.id === id);
-  const isFav = isFavorite(id); 
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!product) {
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`https://fakestoreapi.com/products/${id}`);
+        if (!res.ok) throw new Error('Toote laadimine ebaõnnestus');
+        const data = await res.json();
+        setProduct({
+          id: data.id.toString(),
+          name: data.title,
+          price: `€${data.price}`,
+          image: { uri: data.image },
+          description: data.description,
+        });
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  const contactSeller = () => Linking.openURL('mailto:seller@example.com');
+  const isFav = isFavorite(id);
+
+  if (loading) {
     return (
       <View style={styles.center}>
-        <Text>Toode ei leitud!</Text>
-        <TouchableOpacity onPress={() => router.back()} style={{ marginTop: 10 }}>
-          <Text style={{ color: '#5C6BC0' }}>⬅ Tagasi</Text>
+        <ActivityIndicator size="large" color="#4F63AC" />
+      </View>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <View style={styles.center}>
+        <Text style={{ color: 'red', marginBottom: 10 }}>{error || 'Toode ei leitud!'}</Text>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Text style={{ color: '#4F63AC' }}>⬅ Tagasi</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
-  const contactSeller = () => Linking.openURL('mailto:seller@example.com');
-
   return (
     <ScrollView style={styles.container}>
-      <Image source={product.image} style={styles.image} resizeMode='contain' />
-
+      <Image source={product.image} style={styles.image} resizeMode="contain" />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{product.name}</Text>
         <Text style={styles.price}>{product.price}</Text>
         <Text style={styles.description}>{product.description}</Text>
 
-        {/* LEMMIKUTE NUPP */}
-        <TouchableOpacity 
-          style={styles.favoriteButton} 
-          onPress={() => toggleFavorite(id)} // Saadetakse ainult ID
+        <TouchableOpacity
+          style={styles.favoriteButton}
+          onPress={() => toggleFavorite(id)}
         >
-          <Ionicons 
-            name={isFav ? 'heart' : 'heart-outline'} 
-            size={28} 
-            color={isFav ? 'red' : '#333'} 
+          <Ionicons
+            name={isFav ? 'heart' : 'heart-outline'}
+            size={28}
+            color={isFav ? 'red' : '#333'}
           />
         </TouchableOpacity>
 

@@ -1,30 +1,15 @@
-// path: app/My-Listings/index.jsx
-import { useListings } from '@/app/(context)/ListingsContext'; // Kui sul on context olemas
+import { useListings } from '@/app/(context)/ListingsContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import {
-  Alert,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 export const options = {
   title: 'My Listings',
-
 };
 
-const MyListingsScreen = () => {
+export default function MyListingsScreen() {
   const router = useRouter();
-  const { listings, deleteListing } = useListings(); // Kasutaja kuulutused
-  const [myListings, setMyListings] = useState([]);
-
-  useEffect(() => {
-    setMyListings(listings || []);
-  }, [listings]);
+  const { listings, deleteListing } = useListings();
 
   const handleDelete = (id) => {
     Alert.alert(
@@ -39,23 +24,23 @@ const MyListingsScreen = () => {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
-      <Text style={styles.header}></Text>
+      <Text style={styles.header}>My Listings</Text>
 
-      {myListings.length === 0 ? (
+      {listings.length === 0 ? (
         <Text style={styles.noListings}>You have no listings yet.</Text>
       ) : (
-        myListings.map((listing) => (
+        listings.map(listing => (
           <View key={listing.id} style={styles.listingCard}>
             {listing.photos?.[0]?.uri && (
               <Image source={{ uri: listing.photos[0].uri }} style={styles.photo} />
             )}
             <View style={styles.info}>
               <Text style={styles.title}>{listing.title}</Text>
-              <Text style={styles.price}>{listing.price}</Text>
+              <Text style={styles.price}>{listing.price} €</Text>
             </View>
             <View style={styles.actions}>
               <TouchableOpacity
-                onPress={() => router.push(`/edit-listing/${listing.id}`)}
+                onPress={() => router.push(`/My-Listings/edit-listing/${listing.id}`)}
                 style={styles.actionBtn}
               >
                 <Ionicons name="create-outline" size={20} color="#4857A6" />
@@ -72,7 +57,7 @@ const MyListingsScreen = () => {
       )}
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#F7F7F7' },
@@ -98,5 +83,3 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row' },
   actionBtn: { marginLeft: 10 },
 });
-
-export default MyListingsScreen;

@@ -1,8 +1,10 @@
 // Login.jsx
+import { auth } from '@/app/(context)/AuthContext';
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function Login() {
   const router = useRouter();
@@ -10,11 +12,32 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
-    console.log('Email:', email);
-    console.log('Password:', password);
-    router.push('/(tabs)/'); // Hiljem siia Firebase auth
-  };
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Viga', 'Please enter your email and password.');
+    return;
+  }
+  try {
+  await signInWithEmailAndPassword(auth, email, password);
+  router.replace('/(tabs)/');
+} catch (err) {
+  let message = '';
+  switch (err.code) {
+    case 'auth/invalid-email':
+      message = 'Please enter the correct e-mail address.';
+      break;
+    case 'auth/user-not-found':
+      message = 'User not found. Please check your email.';
+      break;
+    case 'auth/wrong-password':
+      message = 'Wrong password.';
+      break;
+    default:
+      message = 'Login failed. Please try again.';
+  }
+  Alert.alert('Error', message);
+}
+};
 
   const handleGmailLogin = () => {
     alert("Google login pole veel seadistatud Expo jaoks!");

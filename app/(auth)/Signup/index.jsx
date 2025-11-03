@@ -1,8 +1,10 @@
 // Signup.jsx
+import { auth } from '@/app/(context)/AuthContext';
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function Signup() {
   const router = useRouter();
@@ -12,27 +14,48 @@ export default function Signup() {
   const [agreed, setAgreed] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Kontrollime, kas kõik väljad on täidetud ja linnuke pandud
-  const isFormValid = name !== '' && email !== '' && password !== '' && agreed;
+  const handleSignup = async () => {
+    // Kontrollime, kas kõik väljad on täidetud ja linnuke on märgitud
+    if (!name || !email || !password) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
 
-  const handleSignup = () => {
-    if (!isFormValid) return; // Kui vorm ei ole täidetud, ei tee midagi
+    if (!agreed) {
+      Alert.alert('Error', 'Please agree to the Terms & Privacy.');
+      return;
+    }
 
-    console.log('Name:', name);
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Agreed:', agreed);
+    try {
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  await updateProfile(userCredential.user, { displayName: name });
+  router.replace('/(tabs)/'); // Navigeerib pealehele
+} catch (err) {
+  let message = '';
+  switch (err.code) {
+    case 'auth/invalid-email':
+      message = 'Please enter the correct e-mail address.';
+      break;
+    case 'auth/email-already-in-use':
+      message = 'This e-mail is already registered.';
+      break;
+    case 'auth/weak-password':
+      message = 'Password must be at least 6 characters.';
+      break;
+    default:
+      message = 'Sign Up failed. Please try again.';
+  }
+  Alert.alert('Error', message);
+}
 
-    // Navigeeri Tabs ekraanile pärast edukat registreerimist
-    router.push('/(tabs)'); 
   };
 
   const handleGmailLogin = () => {
-    alert("Google login pole veel seadistatud Expo jaoks!");
+    Alert.alert('Google login pole veel seadistatud Expo jaoks!');
   };
 
   const openTerms = () => {
-    router.push('/terms-privacy'); // Avab Terms & Privacy ekraani
+    router.push('/terms-privacy');
   };
 
   return (
@@ -80,9 +103,8 @@ export default function Signup() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.signupButton, { backgroundColor: isFormValid ? '#4F63AC' : '#ccc' }]}
+        style={[styles.signupButton, { backgroundColor: name && email && password && agreed ? '#4F63AC' : '#ccc' }]}
         onPress={handleSignup}
-        disabled={!isFormValid}
       >
         <Text style={styles.signupButtonText}>Sign Up</Text>
       </TouchableOpacity>

@@ -15,10 +15,10 @@ import {
 
 export default function ProfileScreen() {
   const { user, isLoading, logout, isAuthenticated } = useAuth();
-  const { listings } = useListings(); // <- siin loeme listingute arvu
+  const { listings } = useListings();
   const router = useRouter();
 
-  // Kasutajanime format
+  // --- Kasutajanime format ---
   const formatName = (str) => {
     if (!str) return 'Anonüümne';
     return str
@@ -30,7 +30,7 @@ export default function ProfileScreen() {
 
   const displayName = formatName(user?.displayName || user?.email?.split('@')[0] || 'Anonüümne');
 
-  // Väljalogimise funktsioon
+  // --- Väljalogimise funktsioon ---
   const handleSignOut = async () => {
     try {
       await logout();
@@ -41,7 +41,7 @@ export default function ProfileScreen() {
     }
   };
 
-  // Loader
+  // --- Loader ---
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -51,13 +51,13 @@ export default function ProfileScreen() {
     );
   }
 
-  // Kui kasutaja pole sisse logitud
+  // --- Kui kasutaja pole sisse logitud ---
   if (!isAuthenticated) {
     return (
       <View style={styles.loadingContainer}>
-        <Text style={styles.message}>Sa ei ole sisse logitud.</Text>
+        <Text style={styles.message}>Palun logi sisse, et näha profiili.</Text>
         <TouchableOpacity
-          onPress={() => router.replace('/splash')}
+          onPress={() => router.replace('/(auth)/Login')}
           style={styles.loginButton}
         >
           <Text style={styles.loginButtonText}>Logi sisse</Text>
@@ -66,7 +66,7 @@ export default function ProfileScreen() {
     );
   }
 
-  // --- Profiili päis
+  // --- Profiili päis ---
   const ProfileHeader = () => (
     <View style={styles.headerContainer}>
       <View>
@@ -79,7 +79,7 @@ export default function ProfileScreen() {
     </View>
   );
 
-  // --- Profiili valikute komponent
+  // --- Profiili valikute komponent ---
   const ProfileOption = ({ title, subtitle, onPress }) => (
     <TouchableOpacity style={styles.optionContainer} onPress={onPress}>
       <View>
@@ -97,7 +97,7 @@ export default function ProfileScreen() {
       <View style={styles.optionsGroup}>
         <ProfileOption
           title="My Listings"
-          subtitle={`Already have ${listings.length} listing(s)`} // <- kasutab konteksti
+          subtitle={`You have ${listings.length} listing(s)`}
           onPress={() => router.push('/My-Listings/my-listings')}
         />
         <ProfileOption
