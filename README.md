@@ -1,50 +1,80 @@
-# Welcome to your Expo app 👋
+# Furniture App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Lühike juhend arendamiseks ja sagedasemate probleemide lahendamiseks.
 
-## Get started
+## Kiired sammud (dev)
+1. Paigalda sõltuvused:
+   - npm install
+2. Käivita Expo:
+   - npx expo start
+   - või puhasta cache: npx expo start -c
 
-1. Install dependencies
+## Failistruktuuri olulisemad osad
+- app/
+  - (auth)/ — Login/Signup rout'id (pane failid täpselt siia: `app/(auth)/Signup/index.jsx`, `app/(auth)/Login/index.jsx`)
+  - (tabs)/ — peamised vaated (Home, Favorites, Profile)
+  - splash/index.jsx — splash ekraan
+  - productdetails/index.jsx — toote detailid
+  - My-Listings/ — kasutaja kuulutused (edit-listing/[id].jsx)
+  - hooks/useProducts.js — HTTP päringu hook (näide fakestoreapi kasutamiseks)
+  - (context)/ — Auth, Favorites, Listings context-id
 
-   ```bash
-   npm install
-   ```
+## API / andmete laadimine
+Hook näidis (salvesta `app/hooks/useProducts.js`):
+- hook laadib andmed `https://fakestoreapi.com/products`
+- tagastab: `{ products, loading, error, refresh }`
 
-2. Start the app
+Kasutus näites: importida suhtelise teega `import useProducts from '../hooks/useProducts'` või `import useProducts from '@/hooks/useProducts'` vaid kui alias on seadistatud.
 
-   ```bash
-   npx expo start
-   ```
+## Levinumad vead ja lahendused
 
-In the output, you'll find options to open the app in a
+- "Cannot find module '@/hooks/useProducts'":
+  - Kasuta suhtelist importi või sea üles `@` alias (tsconfig.json + Metro/webpack).
+  - Näide tsconfig.json:
+    ```json
+    {
+      "compilerOptions": {
+        "baseUrl": ".",
+        "paths": { "@/*": ["app/*"] }
+      }
+    }
+    ```
+  - Pärast muudatusi taaskäivita VSCode/Expo.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- "No route named '(auth)/Signup'":
+  - Kontrolli, et olemas on fail `app/(auth)/Signup.jsx` või .
+  - Router failirajast sõltub — tee failinimi täpselt nii, nagu route'e kutsutakse.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Splash ei ilmu:
+  - Veendu, et  on olemas.
+  - Kontrolli Root layouti `initialRouteName` ja et navigeerimist ei suunata kohe mujale.
 
-## Get a fresh project
+- "Platform is not defined":
+  - Lisa import: `import { Platform } from 'react-native'`.
 
-When you're ready, run:
+- Topelt header/ülearune header My Listings peal:
+  - Peida automaatne header ekraanil: lisa faili ülaossa:
+    ```js
+    export const options = { headerShown: false };
+    ```
 
-```bash
-npm run reset-project
-```
+- Edit listing `Cannot read property 'id' of undefined`:
+  - Kasuta  või `useSearchParams()` ja lisa kaitsed.
+  - Kontrolli, et  context on laetud enne  kutsumist.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- Favorites ei kuva:
+  - Veendu, et `useProducts` tagastab product objektidel õiged väljad (, `name` või , `image`, ).
+  - Kontrolli, et `favorites` on massiiv ja id tüübid ühtivad (String vs Number).
 
-## Learn more
+- Image ei lae (`@/assets/...`):
+  - Kasuta suhtelist teed `require('../../assets/images/opening_image.png')` või seadista `@` alias.
 
-To learn more about developing your project with Expo, look at the following resources:
+- Hoiatus: `props.pointerEvents is deprecated`:
+  - Kasuta stiilis  kui vaja.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Kasulikud näited
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Peida header ühel ekraanil:
+  ```js
+  // app/My-Listings/index.jsx
+  export const options = { headerShown: false };
